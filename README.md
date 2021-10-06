@@ -27,8 +27,3 @@ LINKS
 WEBSITE LINK : https://priceless-poitras-d4430e.netlify.app/
 
 GITHUB LINK :  https://github.com/Sb2001nov/PECTO
-
-
-
- 
-
