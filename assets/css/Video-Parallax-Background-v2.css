@@ -12,7 +12,8 @@
   filter: brightness(50%);
 }
 
-.parallax-background, .parallax-placeholder {
+.parallax-background,
+.parallax-placeholder {
   filter: brightness(50%);
 }
 
@@ -53,4 +54,3 @@
   display: table-cell;
   vertical-align: middle;
 }
-

@@ -1,85 +1,79 @@
-$(document).ready(function(){
+$(document).ready(function () {
+  (function () {
+    if (!("requestAnimationFrame" in window)) return;
+    if (/Mobile|Android/.test(navigator.userAgent)) return;
 
-(function(){
+    var backgrounds = [];
 
-	if(!('requestAnimationFrame' in window)) return;
-	if(/Mobile|Android/.test(navigator.userAgent)) return;
+    $(".parallax").each(function () {
+      var el = $(this);
+      var bg = el.children(".parallax-background");
+      bg.css({
+        position: "absolute",
+        "min-width": "100%",
+        width: "auto",
+        "min-height": "100vh",
+        top: 0,
+        left: 0,
+        zIndex: -100,
+        display: "block",
+      });
+      backgrounds.push(bg);
 
-	var backgrounds = [];
+      el.css({
+        position: "relative",
+        background: "transparent",
+        overflow: "hidden",
+      });
+    });
 
-	$('.parallax').each(function(){
-		var el = $(this);
-		var bg = el.children('.parallax-background');
-		bg.css({
-			position: 'absolute',
-			'min-width':'100%',
-            'width':'auto',
-            'min-height': '100vh',
-			top:0, left:0,
-			zIndex: -100,
-            display: 'block'
-		});
-		backgrounds.push(bg);
+    if (!backgrounds.length) return;
 
-		el.css({
-			position:'relative',
-			background:'transparent',
-			overflow: 'hidden',
-		});
-	});
+    var visible = [];
+    var scheduled;
 
-	if(!backgrounds.length) return;
+    $(window).on("scroll resize", scroll);
 
-	var visible = [];
-	var scheduled;
+    scroll();
 
-	$(window).on('scroll resize', scroll);
+    function scroll() {
+      visible.length = 0;
 
-	scroll();
+      for (var i = 0; i < backgrounds.length; i++) {
+        var rect = backgrounds[i][0].parentNode.getBoundingClientRect();
 
-	function scroll(){
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          visible.push({
+            rect: rect,
+            node: backgrounds[i],
+          });
+        }
+      }
 
-		visible.length = 0;
+      cancelAnimationFrame(scheduled);
 
-		for(var i = 0; i < backgrounds.length; i++){
-			var rect = backgrounds[i][0].parentNode.getBoundingClientRect();
+      if (visible.length) {
+        scheduled = requestAnimationFrame(update);
+      }
+    }
 
-			if(rect.bottom > 0 && rect.top < window.innerHeight){
-				visible.push({
-					rect: rect,
-					node: backgrounds[i]
-				});
-			}
+    function update() {
+      for (var i = 0; i < visible.length; i++) {
+        var rect = visible[i].rect;
+        var node = visible[i].node[0];
 
-		}
-
-		cancelAnimationFrame(scheduled);
-
-		if(visible.length){
-			scheduled = requestAnimationFrame(update);
-		}
-
-	}
-
-	function update(){
-
-		for(var i = 0; i < visible.length; i++){
-			var rect = visible[i].rect;
-			var node = visible[i].node[0];
-
-			var quot = Math.max(rect.bottom, 0) / (window.innerHeight + rect.height);
-            var shift = '';
-            if (node.hasAttribute('parallax-center')) {
-                var nodeHeight = visible[i].node.outerHeight();
-                shift = -((nodeHeight - rect.height)/2 + rect.top) + 'px';
-            } else {
-                shift = -rect.top+'px';
-            }
-            console.log(shift);
-			node.style.transform = 'translate3d(0, '+(shift)+', 0)';
-		}
-
-	}
-
-})();
+        var quot =
+          Math.max(rect.bottom, 0) / (window.innerHeight + rect.height);
+        var shift = "";
+        if (node.hasAttribute("parallax-center")) {
+          var nodeHeight = visible[i].node.outerHeight();
+          shift = -((nodeHeight - rect.height) / 2 + rect.top) + "px";
+        } else {
+          shift = -rect.top + "px";
+        }
+        console.log(shift);
+        node.style.transform = "translate3d(0, " + shift + ", 0)";
+      }
+    }
+  })();
 });
