@@ -1,1 +1,1 @@
-# PICTO
+# PECTO
